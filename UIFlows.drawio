@@ -1,6 +1,6 @@
 <mxfile host="app.diagrams.net">
   <diagram name="ページ-1" id="9goJZONoLCiLlkWGqIUr">
-    <mxGraphModel dx="2700" dy="1087" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="2002" dy="825" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -170,6 +170,18 @@
         </mxCell>
         <mxCell id="sOJYxBWlBG44MxJN4n10-89" edge="1" parent="1" source="sOJYxBWlBG44MxJN4n10-79" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" target="sOJYxBWlBG44MxJN4n10-55">
           <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="sOJYxBWlBG44MxJN4n10-94" parent="1" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" value="主な機能一覧" vertex="1">
+          <mxGeometry height="120" width="490" x="160" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="sOJYxBWlBG44MxJN4n10-95" parent="sOJYxBWlBG44MxJN4n10-94" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" value="・&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;ユーザー認証（新規登録・ログイン）&lt;/span&gt;" vertex="1">
+          <mxGeometry height="30" width="490" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="sOJYxBWlBG44MxJN4n10-96" parent="sOJYxBWlBG44MxJN4n10-94" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" value="・位置情報付き投稿の作成" vertex="1">
+          <mxGeometry height="30" width="490" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="sOJYxBWlBG44MxJN4n10-97" parent="sOJYxBWlBG44MxJN4n10-94" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" value="・マップ上での投稿閲覧" vertex="1">
+          <mxGeometry height="30" width="490" y="90" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
