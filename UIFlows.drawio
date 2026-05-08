@@ -53,6 +53,53 @@
         <mxCell id="sOJYxBWlBG44MxJN4n10-17" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;&lt;b&gt;①認証フロー&lt;/b&gt;&lt;/font&gt;" vertex="1">
           <mxGeometry height="30" width="210" x="-210" y="40" as="geometry" />
         </mxCell>
+        <mxCell id="sOJYxBWlBG44MxJN4n10-19" connectable="0" parent="1" style="group" value="" vertex="1">
+          <mxGeometry height="370" width="810" x="-210" y="585" as="geometry" />
+        </mxCell>
+        <mxCell id="sOJYxBWlBG44MxJN4n10-49" parent="sOJYxBWlBG44MxJN4n10-19" style="rounded=1;whiteSpace=wrap;html=1;" value="" vertex="1">
+          <mxGeometry height="340" width="800" as="geometry" />
+        </mxCell>
+        <mxCell id="sOJYxBWlBG44MxJN4n10-22" parent="sOJYxBWlBG44MxJN4n10-19" style="rounded=0;whiteSpace=wrap;html=1;" value="投稿作成画面" vertex="1">
+          <mxGeometry height="200" width="120" x="20" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="sOJYxBWlBG44MxJN4n10-26" parent="sOJYxBWlBG44MxJN4n10-19" style="rounded=0;whiteSpace=wrap;html=1;" value="投稿完了画面" vertex="1">
+          <mxGeometry height="200" width="120" x="600" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="sOJYxBWlBG44MxJN4n10-27" edge="1" parent="sOJYxBWlBG44MxJN4n10-19" source="sOJYxBWlBG44MxJN4n10-22" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="sOJYxBWlBG44MxJN4n10-33">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="220" y="280" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="sOJYxBWlBG44MxJN4n10-28" edge="1" parent="sOJYxBWlBG44MxJN4n10-19" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="sOJYxBWlBG44MxJN4n10-25" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="340" y="90" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="sOJYxBWlBG44MxJN4n10-30" edge="1" parent="sOJYxBWlBG44MxJN4n10-19" source="sOJYxBWlBG44MxJN4n10-34" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" target="sOJYxBWlBG44MxJN4n10-26">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="520" y="90" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="sOJYxBWlBG44MxJN4n10-36" edge="1" parent="sOJYxBWlBG44MxJN4n10-19" source="sOJYxBWlBG44MxJN4n10-33" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="sOJYxBWlBG44MxJN4n10-34">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="sOJYxBWlBG44MxJN4n10-33" parent="sOJYxBWlBG44MxJN4n10-19" style="rounded=0;whiteSpace=wrap;html=1;" value="位置情報登録画面" vertex="1">
+          <mxGeometry height="200" width="120" x="210" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="sOJYxBWlBG44MxJN4n10-34" parent="sOJYxBWlBG44MxJN4n10-19" style="rounded=0;whiteSpace=wrap;html=1;" value="投稿確認画面" vertex="1">
+          <mxGeometry height="200" width="120" x="410" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="sOJYxBWlBG44MxJN4n10-31" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="&lt;span style=&quot;font-size: 14px;&quot;&gt;&lt;b&gt;②投稿作成フロー&lt;/b&gt;&lt;/span&gt;" vertex="1">
+          <mxGeometry height="30" width="210" x="-180" y="520" as="geometry" />
+        </mxCell>
+        <mxCell id="sOJYxBWlBG44MxJN4n10-32" edge="1" parent="1" source="sOJYxBWlBG44MxJN4n10-11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="sOJYxBWlBG44MxJN4n10-22">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="450" y="560" />
+              <mxPoint x="-130" y="560" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
       </root>
     </mxGraphModel>
   </diagram>
