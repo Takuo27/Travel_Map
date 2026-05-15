@@ -1,30 +1,40 @@
-<!-- ==========================
-index.html
-Thymeleaf画面
-========================== -->
-
 <!DOCTYPE html>
-
-<!-- Thymeleaf利用宣言 -->
 <html xmlns:th="http://www.thymeleaf.org">
 
 <head>
 
-    <!-- 文字コード -->
     <meta charset="UTF-8">
 
-    <!-- タイトル -->
     <title>Travel Map</title>
 
     <!-- Leaflet CSS -->
     <link rel="stylesheet"
-        href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+          href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
+    <style>
+
+        /* 地図サイズ */
+        #map {
+
+            height: 500px;
+
+            width: 100%;
+        }
+
+        /* フォーム余白 */
+        form {
+
+            margin-top: 20px;
+        }
+
+    </style>
+
 </head>
 
 <body>
 
-    <!-- 見出し -->
-    <h1>投稿一覧</h1>
+    <!-- タイトル -->
+    <h1>Travel Map</h1>
 
     <!-- 地図表示エリア -->
     <div id="map"></div>
@@ -32,30 +42,52 @@ Thymeleaf画面
     <!-- 投稿フォーム -->
     <form action="/posts" method="post">
 
-        <!-- 投稿内容入力 -->
-        <input type="text"
-               name="content"
-               placeholder="投稿を入力">
+        <!-- 投稿内容 -->
+        <div>
 
-        <br><br>
+            <label>投稿内容</label>
 
-        <!-- 緯度入力 -->
-        <input type="text"
-               name="latitude"
-               placeholder="緯度">
+            <input type="text"
+                   name="content"
+                   placeholder="旅行先を入力">
 
-        <br><br>
+        </div>
 
-        <!-- 経度入力 -->
-        <input type="text"
-               name="longitude"
-               placeholder="経度">
+        <br>
 
-        <br><br>
+        <!-- 緯度 -->
+        <div>
+
+            <label>緯度</label>
+
+            <input type="text"
+                   id="lat"
+                   name="latitude"
+                   readonly>
+
+        </div>
+
+        <br>
+
+        <!-- 経度 -->
+        <div>
+
+            <label>経度</label>
+
+            <input type="text"
+                   id="lng"
+                   name="longitude"
+                   readonly>
+
+        </div>
+
+        <br>
 
         <!-- 投稿ボタン -->
         <button type="submit">
-            投稿
+
+            投稿する
+
         </button>
 
     </form>
@@ -63,62 +95,203 @@ Thymeleaf画面
     <hr>
 
     <!-- 投稿一覧 -->
+    <h2>投稿一覧</h2>
+
     <ul>
 
-        <!-- postsを1件ずつループ -->
+        <!-- 投稿を1件ずつ表示 -->
         <li th:each="post : ${posts}">
 
             <!-- 投稿内容 -->
-            <span th:text="${post.content}"></span>
+            <b th:text="${post.content}"></b>
 
             <br>
 
             <!-- 緯度 -->
+            緯度:
             <span th:text="${post.latitude}"></span>
 
             <br>
 
             <!-- 経度 -->
+            経度:
             <span th:text="${post.longitude}"></span>
 
             <br>
 
             <!-- 投稿日時 -->
-            <small th:text="${post.createdAt}"></small>
+            投稿日時:
+            <span th:text="${post.createdAt}"></span>
 
-            <br><br>
+            <hr>
 
         </li>
 
     </ul>
 
-    <style>
-    /* 地図サイズ */
-    #map {
-        height: 500px;
-        width: 100%;
-    }
-    </style>
-
     <!-- Leaflet JavaScript -->
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
-    <script>
+    <!-- JavaScript -->
+    <script th:inline="javascript">
 
+        // =========================
         // 地図生成
+        // =========================
+
+        // mapオブジェクト生成
         const map = L.map('map');
 
+        // =========================
         // 初期表示位置
-        // 大阪駅付近
-        map.setView([34.7025, 135.4959], 13);
+        // =========================
 
+        // 最初は仮位置(大阪駅)
+        map.setView(
+
+            // 緯度・経度
+            [34.7025, 135.4959],
+
+            // ズーム
+            13
+        );
+
+        // =========================
         // 地図タイル追加
-        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        // =========================
 
-            attribution:
-                '&copy; OpenStreetMap contributors'
+        L.tileLayer(
 
-        }).addTo(map);
+            // OpenStreetMap Japan
+            'https://tile.openstreetmap.jp/styles/osm-bright/{z}/{x}/{y}.png',
+
+            {
+                attribution:
+                    '&copy; OpenStreetMap contributors'
+            }
+
+        ).addTo(map);
+
+        // =========================
+        // 現在地取得
+        // =========================
+
+        // ブラウザがGPS対応しているか確認
+        if (navigator.geolocation) {
+
+            // 現在地取得
+            navigator.geolocation.getCurrentPosition(
+
+                // 成功時
+                function (position) {
+
+                    // 緯度取得
+                    const lat = position.coords.latitude;
+
+                    // 経度取得
+                    const lng = position.coords.longitude;
+
+                    // コンソール確認
+                    console.log("現在地:", lat, lng);
+
+                    // 現在地へMap移動
+                    map.setView(
+
+                        [lat, lng],
+
+                        13
+                    );
+
+                    // 現在地ピン追加
+                    L.marker([lat, lng])
+
+                        .addTo(map)
+
+                        .bindPopup("現在地")
+
+                        .openPopup();
+                },
+
+                // 失敗時
+                function () {
+
+                    alert("現在地取得に失敗しました");
+                }
+            );
+        }
+
+        // =========================
+        // DB投稿一覧取得
+        // =========================
+
+        // Spring Bootから投稿一覧受取
+        const posts = /*[[${posts}]]*/ [];
+
+        // 投稿数確認
+        console.log(posts);
+
+        // =========================
+        // DB投稿をMapへ表示
+        // =========================
+
+        // 投稿分ループ
+        posts.forEach(post => {
+
+            // marker生成
+            L.marker([post.latitude, post.longitude])
+
+                // mapへ追加
+                .addTo(map)
+
+                // ポップアップ表示
+                .bindPopup(
+
+                    `
+                    <b>${post.content}</b><br>
+
+                    緯度: ${post.latitude}<br>
+
+                    経度: ${post.longitude}
+                    `
+                );
+
+        });
+
+        // =========================
+        // 現在ピン保持
+        // =========================
+
+        let currentMarker = null;
+
+        // =========================
+        // 地図クリックイベント
+        // =========================
+
+        map.on('click', function (e) {
+
+            // 緯度取得
+            const lat = e.latlng.lat;
+
+            // 経度取得
+            const lng = e.latlng.lng;
+
+            // inputへ自動設定
+            document.getElementById("lat").value = lat;
+
+            document.getElementById("lng").value = lng;
+
+            // 既存ピン削除
+            if (currentMarker !== null) {
+
+                map.removeLayer(currentMarker);
+            }
+
+            // 新規ピン追加
+            currentMarker = L.marker([lat, lng])
+
+                .addTo(map);
+
+        });
 
     </script>
 

@@ -1,65 +1,50 @@
-// ===============================
-// Post.java
-// Entity(DBテーブル)
-// ===============================
-
 package com.takuya.travelmap.model;
 
-// JPA(Entity)関連
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
-// 日時クラス
 import java.time.LocalDateTime;
 
-// このクラスをDBテーブルとして扱う
 @Entity
 public class Post {
 
-    // 主キー(primary key)
+    // 主キー
     @Id
-
-    // ID自動採番
-    // MySQLのAUTO_INCREMENTに対応
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     // 投稿内容
     private String content;
 
-    // 緯度(latitude)
-    // 例: 34.702485
+    // 緯度
     private double latitude;
 
-    // 経度(longitude)
-    // 例: 135.495951
+    // 経度
     private double longitude;
 
     // 投稿日時
     private LocalDateTime createdAt;
 
-    // デフォルトコンストラクタ
-    // JPAがDBデータをJavaオブジェクトへ変換時に必要
+    // JPA用デフォルトコンストラクタ
     public Post() {
     }
 
-    // 投稿作成用コンストラクタ
-    public Post(String content,
-                double latitude,
-                double longitude) {
+    // 投稿生成用
+    public Post(
+            String content,
+            double latitude,
+            double longitude
+    ) {
 
-        // 投稿内容を代入
         this.content = content;
 
-        // 緯度を代入
         this.latitude = latitude;
 
-        // 経度を代入
         this.longitude = longitude;
 
-        // 現在日時を設定
+        // 現在日時
         this.createdAt = LocalDateTime.now();
     }
 
@@ -73,7 +58,7 @@ public class Post {
         return content;
     }
 
-    // 投稿内容更新
+    // 投稿内容設定
     public void setContent(String content) {
         this.content = content;
     }
@@ -83,9 +68,19 @@ public class Post {
         return latitude;
     }
 
+    // 緯度設定
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
     // 経度取得
     public double getLongitude() {
         return longitude;
+    }
+
+    // 経度設定
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
     }
 
     // 投稿日時取得
