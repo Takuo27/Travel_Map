@@ -32,17 +32,39 @@ public class PostService {
         return postRepository.findAll();
     }
 
+    // ===============================
     // 投稿追加
+    // ===============================
     public void addPost(String content,
                         double latitude,
-                        double longitude) {
+                        double longitude,
+                        String imagePath) {
 
-        // Postオブジェクト生成
-        Post post = new Post(content,
-                             latitude,
-                             longitude);
+        // Post生成
+        Post post = new Post(
+                content,
+                latitude,
+                longitude
+        );
+
+        // 画像ファイル名セット
+        post.setImagePath(
+                imagePath
+        );
 
         // DB保存
-        postRepository.save(post);
+        postRepository.save(
+                post
+        );
+    }
+
+    // ===============================
+    // 投稿削除
+    // ===============================
+    public void deletePost(int id) {
+
+        // idを指定して削除
+        postRepository.deleteById(id);
+
     }
 }
