@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<meta charset="UTF-8">
+<title>投稿編集</title>
+
+<link rel="stylesheet"
+      href="/css/style.css">
+
+</head>
+
+<body>
+    <h1>投稿編集</h1>
+    <form action="/update"
+        method="post"
+        th:object="${post}"
+        enctype="multipart/form-data">
+
+        <input type="hidden"
+            th:field="*{id}">
+
+        <div>
+            <label>投稿内容</label>
+
+            <input type="text"
+                th:field="*{content}">
+        </div>
+
+        <br>
+        
+        <div>
+            <label>緯度</label>
+            <input type="hidden"
+                th:field="*{latitude}">
+            <span th:text="*{latitude}">
+            </span>
+        </div>
+
+        <br>
+
+        <div>
+            <label>経度</label>
+            <input type="hidden"
+                th:field="*{longitude}">
+
+            <span th:text="*{longitude}">
+            </span>
+        </div>
+
+        <br>
+
+        <div>
+            <label>現在の画像</label>
+
+            <br>
+
+            <img th:if="${post.imagePath != null}"
+                th:src="@{/uploads/{img}(img=${post.imagePath})}"
+                width="250">
+        </div>
+
+        <br>
+
+        <div>
+            <label>新しい画像</label>
+
+            <input type="file"
+                name="image"
+                accept="image/*">
+        </div>
+
+        <br>
+
+        <button type="submit">
+            更新する
+        </button>
+
+    </form>
+    <br>
+
+    <button onclick="location.href='/'">戻る</button>
+</body>
+
+</html>

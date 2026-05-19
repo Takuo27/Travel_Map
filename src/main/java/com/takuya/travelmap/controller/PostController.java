@@ -37,7 +37,6 @@ import java.nio.file.Paths;
 // ファイルコピー
 import java.nio.file.StandardCopyOption;
 
-// ControllerとしてSpring管理
 @Controller
 public class PostController {
 
@@ -48,7 +47,6 @@ public class PostController {
 
     // =========================
     // コンストラクタDI
-    // Springが自動注入
     // =========================
     public PostController(
             PostService postService) {
@@ -58,114 +56,97 @@ public class PostController {
 
     // =========================
     // TOP画面表示
-    // URL:
-    // /
+    // URL: /
     // =========================
-
     @GetMapping("/")
-    public String index(Model model) {
+    public String index(
+            Model model) {
 
-        // DB投稿一覧取得
+        // 投稿一覧
         model.addAttribute(
                 "posts",
                 postService.getPosts()
         );
 
-        // 空Post生成
-        // フォーム用
+        // 投稿フォーム用
         model.addAttribute(
                 "post",
                 new Post()
         );
 
-        // templates/index.html表示
+        // 投稿件数
+        model.addAttribute(
+                "postCount",
+                postService.getPostCount()
+        );
+
+        model.addAttribute(
+                "placeCount",
+                postService.getPlaceCount()
+        );
         return "index";
     }
 
     // =========================
-    // 投稿処理
-    // URL:
-    // /posts
+    // 投稿追加
+    // URL: /posts
     // =========================
-
     @PostMapping("/posts")
     public String addPost(
 
-            // 入力チェック実行
             @Valid
-
-            // フォーム入力値をPostへ格納
             @ModelAttribute Post post,
 
-            // エラー保持
             BindingResult result,
 
-            // 画像ファイル受取
             @RequestParam("image")
             MultipartFile image,
 
             Model model
     ) {
 
-        // =========================
-        // 入力エラー時
-        // =========================
-
+        // 入力エラー
         if (result.hasErrors()) {
 
-            // 投稿一覧再取得
             model.addAttribute(
                     "posts",
                     postService.getPosts()
             );
 
+            model.addAttribute(
+                    "postCount",
+                    postService.getPostCount()
+            );
+
             return "index";
         }
+
+        String imageName = "";
 
         // =========================
         // 画像保存
         // =========================
-
-        // 保存する画像名
-        String imageName = "";
-
         if (!image.isEmpty()) {
 
             try {
 
-                // 元画像名取得
                 imageName =
-                    image.getOriginalFilename();
+                        image.getOriginalFilename();
 
-                // 保存先
                 Path uploadPath =
-                    Paths.get(
-                        "src/main/resources/static/uploads"
-                    );
+                        Paths.get(
+                                "src/main/resources/static/uploads"
+                        );
 
-                // ファイル保存
                 Files.copy(
-
-                    image.getInputStream(),
-
-                    uploadPath.resolve(
-                        imageName
-                    ),
-
-                    StandardCopyOption.REPLACE_EXISTING
-
+                        image.getInputStream(),
+                        uploadPath.resolve(
+                                imageName
+                        ),
+                        StandardCopyOption.REPLACE_EXISTING
                 );
 
-                System.out.println(
-
-                    "保存完了: " +
-                    imageName
-
-                );
-
-            }
-
-            catch(Exception e){
+            } catch (Exception e) {
 
                 e.printStackTrace();
 
@@ -173,9 +154,7 @@ public class PostController {
 
         }
 
-        // =========================
         // DB保存
-        // =========================
         postService.addPost(
                 post.getContent(),
                 post.getLatitude(),
@@ -183,28 +162,142 @@ public class PostController {
                 imageName
         );
 
-        // TOPへ戻る
+        return "redirect:/";
+    }
+
+    // =========================
+    // 編集画面表示
+    // URL: /edit
+    // =========================
+    @GetMapping("/edit")
+    public String editPost(
+
+            @RequestParam int id,
+
+            Model model
+    ) {
+
+        Post post =
+                postService.getPostById(
+                        id
+                );
+
+        model.addAttribute(
+                "post",
+                post
+        );
+
+        return "edit";
+    }
+
+    // =========================
+    // 更新処理
+    // URL: /update
+    // =========================
+    @PostMapping("/update")
+    public String updatePost(
+
+            @ModelAttribute Post post,
+
+            @RequestParam("image")
+            MultipartFile image
+    ) {
+
+        String imageName = "";
+
+        if (!image.isEmpty()) {
+
+            try {
+
+                imageName =
+                        image.getOriginalFilename();
+
+                Path uploadPath =
+                        Paths.get(
+                                "src/main/resources/static/uploads"
+                        );
+
+                Files.copy(
+                        image.getInputStream(),
+                        uploadPath.resolve(
+                                imageName
+                        ),
+                        StandardCopyOption.REPLACE_EXISTING
+                );
+
+            } catch(Exception e){
+
+                e.printStackTrace();
+
+            }
+
+        }
+
+        postService.updatePost(
+                post,
+                imageName
+        );
+
         return "redirect:/";
     }
 
     // =========================
     // 投稿削除
-    // URL:
-    // /delete
+    // URL: /delete
     // =========================
-
     @PostMapping("/delete")
     public String deletePost(
 
-            // 削除対象ID受取
             @RequestParam int id
     ) {
 
-        // Service呼出
-        postService.deletePost(id);
+        postService.deletePost(
+                id
+        );
 
-        // TOPへ戻る
         return "redirect:/";
+    }
+
+    // =========================
+    // 投稿検索
+    // URL: /search
+    // =========================
+    @GetMapping("/search")
+    public String searchPosts(
+
+            @RequestParam
+            String keyword,
+
+            Model model
+    ) {
+
+        model.addAttribute(
+                "posts",
+                postService.searchPosts(
+                        keyword
+                )
+        );
+
+        model.addAttribute(
+                "post",
+                new Post()
+        );
+
+        model.addAttribute(
+                "keyword",
+                keyword
+        );
+
+        model.addAttribute(
+                "postCount",
+                postService.getPostCount()
+        );
+
+        model.addAttribute(
+                "placeCount",
+                postService.getPlaceCount()
+        );
+        return "index";
     }
 
 }

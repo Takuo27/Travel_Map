@@ -1,8 +1,3 @@
-// ===============================
-// PostService.java
-// 業務処理(Service層)
-// ===============================
-
 package com.takuya.travelmap.service;
 
 import com.takuya.travelmap.model.Post;
@@ -10,61 +5,160 @@ import com.takuya.travelmap.repository.PostRepository;
 
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
-// ServiceクラスとしてSpring管理対象
 @Service
 public class PostService {
 
-    // Repository保持
     private final PostRepository postRepository;
 
-    // コンストラクタDI
-    public PostService(PostRepository postRepository) {
+    public PostService(
+            PostRepository postRepository
+    ) {
 
         this.postRepository = postRepository;
     }
 
-    // 投稿一覧取得
+    // =========================
+    // 全件取得
+    // =========================
     public List<Post> getPosts() {
 
-        // DBから全件取得
         return postRepository.findAll();
     }
 
-    // ===============================
+    // =========================
     // 投稿追加
-    // ===============================
-    public void addPost(String content,
-                        double latitude,
-                        double longitude,
-                        String imagePath) {
+    // =========================
+    public void addPost(
 
-        // Post生成
-        Post post = new Post(
-                content,
-                latitude,
-                longitude
-        );
+            String content,
+            double latitude,
+            double longitude,
+            String imagePath
 
-        // 画像ファイル名セット
+    ) {
+
+        Post post =
+                new Post(
+                        content,
+                        latitude,
+                        longitude
+                );
+
         post.setImagePath(
                 imagePath
         );
 
-        // DB保存
+        post.setCreatedAt(
+                LocalDateTime.now()
+        );
+
         postRepository.save(
                 post
         );
+
     }
 
-    // ===============================
+    // =========================
     // 投稿削除
-    // ===============================
-    public void deletePost(int id) {
+    // =========================
+    public void deletePost(
+            int id
+    ) {
 
-        // idを指定して削除
-        postRepository.deleteById(id);
+        postRepository.deleteById(
+                id
+        );
 
+    }
+
+    // =========================
+    // ID取得
+    // =========================
+    public Post getPostById(
+            int id
+    ) {
+
+        return postRepository
+                .findById(id)
+                .orElse(null);
+
+    }
+
+    // =========================
+    // 投稿更新
+    // =========================
+    public void updatePost(
+            Post post,
+            String imageName
+    ) {
+
+        Post oldPost =
+                postRepository
+                .findById(
+                        post.getId()
+                )
+                .orElse(null);
+
+        if(oldPost != null){
+
+            oldPost.setContent(
+                    post.getContent()
+            );
+
+            oldPost.setLatitude(
+                    post.getLatitude()
+            );
+
+            oldPost.setLongitude(
+                    post.getLongitude()
+            );
+
+            // 新画像がある場合のみ更新
+            if(!imageName.isEmpty()){
+
+                oldPost.setImagePath(
+                        imageName
+                );
+
+            }
+
+            postRepository.save(
+                    oldPost
+            );
+
+        }
+
+    }
+
+    // =========================
+    // キーワード検索
+    // =========================
+    public List<Post> searchPosts(
+            String keyword
+    ) {
+
+        return postRepository
+                .findByContentContaining(
+                        keyword
+                );
+
+    }
+
+    // =========================
+    // 投稿件数取得
+    // =========================
+    public long getPostCount() {
+        return postRepository.count();
+    }
+
+    // =========================
+    // 訪問場所数取得
+    // =========================
+    public long getPlaceCount() {
+        return postRepository
+                .countDistinctContent();
     }
 }

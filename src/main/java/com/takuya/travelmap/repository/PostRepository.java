@@ -1,13 +1,29 @@
 package com.takuya.travelmap.repository;
 
-// Postクラス使用
 import com.takuya.travelmap.model.Post;
 
-// JPA Repository
 import org.springframework.data.jpa.repository.JpaRepository;
 
-// Repositoryとして利用
+import java.util.List;
+
+import org.springframework.data.jpa.repository.Query;
+
 public interface PostRepository
         extends JpaRepository<Post, Integer> {
+
+    // =========================
+    // 投稿内容部分一致検索
+    // =========================
+    List<Post> findByContentContaining(
+            String keyword
+    );
+
+    // =========================
+    // 重複除外件数取得
+    // =========================
+    @Query(
+        "SELECT COUNT(DISTINCT p.content) FROM Post p"
+    )
+    long countDistinctContent();
 
 }
