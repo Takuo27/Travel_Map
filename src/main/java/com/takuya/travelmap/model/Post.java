@@ -36,6 +36,9 @@ public class Post {
     // 画像パス
     private String imagePath;
 
+    // いいね数
+    private int likes;
+
     // 空コンストラクタ
     public Post() {
 
@@ -89,6 +92,11 @@ public class Post {
         return imagePath;
     }
 
+    public int getLikes() {
+
+        return likes;
+    }
+
     // =========================
     // Setter
     // =========================
@@ -134,5 +142,9 @@ public class Post {
 
         this.imagePath = imagePath;
     }
+    public void setLikes(
+            int likes) {
 
+        this.likes = likes;
+    }
 }

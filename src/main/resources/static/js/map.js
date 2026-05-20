@@ -19,12 +19,10 @@ posts.forEach(post => {
 
         L.marker([post.latitude, post.longitude])
             .addTo(map)
-        .bindPopup(
+            .bindPopup(
             `
             <div class="popup">
-
                 <h3>${post.content}</h3>
-
                 ${
                     post.imagePath
                     ?
@@ -34,20 +32,13 @@ posts.forEach(post => {
                     :
                     `画像なし`
                 }
-
-                <p>
-                    緯度:
-                    ${post.latitude.toFixed(5)}
-                </p>
-
-                <p>
-                    経度:
-                    ${post.longitude.toFixed(5)}
-                </p>
-
+                <br><br>
+                <a href="/detail?id=${post.id}">
+                    詳細を見る
+                </a>
             </div>
             `
-        );
+            );
     }
 });
 

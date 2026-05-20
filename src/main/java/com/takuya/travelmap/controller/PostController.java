@@ -29,6 +29,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 // ファイルアップロード受取
 import org.springframework.web.multipart.MultipartFile;
 
+import com.takuya.travelmap.service.CommentService;
+
 // ファイル操作
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -45,14 +47,24 @@ public class PostController {
     // =========================
     private final PostService postService;
 
+    private final CommentService commentService;
+
     // =========================
     // コンストラクタDI
     // =========================
-    public PostController(
-            PostService postService) {
+        public PostController(
 
-        this.postService = postService;
-    }
+                PostService postService,
+
+                CommentService commentService
+        ) {
+
+        this.postService =
+                postService;
+
+        this.commentService =
+                commentService;
+        }
 
     // =========================
     // TOP画面表示
@@ -300,4 +312,112 @@ public class PostController {
         return "index";
     }
 
+        // =========================
+        // 投稿詳細画面
+        // URL: /detail
+        // =========================
+        @GetMapping("/detail")
+        public String detailPost(
+
+                @RequestParam
+                int id,
+
+                Model model
+        ) {
+
+        // IDから投稿取得
+        Post post =
+                postService.getPostById(
+                        id
+                );
+
+        // HTMLへ渡す
+        model.addAttribute(
+                "post",
+                post
+        );
+
+        model.addAttribute(
+                "comments",
+                commentService
+                .getCommentsByPostId(
+                        id
+                )
+        );
+
+        return "detail";
+        }
+
+        // =========================
+        // いいね処理
+        // URL: /like
+        // =========================
+        @PostMapping("/like")
+        public String addLike(
+
+                @RequestParam
+                int id
+        ) {
+
+        // いいね追加
+        postService.addLike(
+                id
+        );
+
+        // 詳細画面へ戻る
+        return "redirect:/detail?id="
+                + id;
+
+        }
+
+        // =========================
+        // コメント追加
+        // URL: /comment
+        // =========================
+        @PostMapping("/comment")
+        public String addComment(
+
+                @RequestParam
+                int postId,
+
+                @RequestParam
+                String content
+        ) {
+
+        commentService.addComment(
+
+                postId,
+                content
+        );
+
+        return "redirect:/detail?id="
+                + postId;
+
+        }
+
+        // =========================
+        // コメント削除
+        // URL: /comment/delete
+        // =========================
+        @PostMapping(
+                "/comment/delete"
+        )
+        public String deleteComment(
+
+                @RequestParam
+                int commentId,
+
+                @RequestParam
+                int postId
+        ) {
+
+        commentService
+                .deleteComment(
+                        commentId
+                );
+
+        return
+                "redirect:/detail?id="
+                + postId;
+        }
 }

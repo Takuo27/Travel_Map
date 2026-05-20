@@ -161,4 +161,32 @@ public class PostService {
         return postRepository
                 .countDistinctContent();
     }
+
+        // =========================
+        // いいね追加
+        // =========================
+        public void addLike(
+                int id
+        ) {
+
+        // IDから投稿取得
+        Post post =
+                postRepository
+                .findById(id)
+                .orElse(null);
+
+        // 投稿存在時
+        if(post != null){
+
+                // いいね +1
+                post.setLikes(
+                        post.getLikes() + 1
+                );
+
+                // DB更新
+                postRepository.save(
+                        post
+                );
+        }
+}
 }
