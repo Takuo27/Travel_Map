@@ -2,135 +2,201 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
 <head>
-<meta charset="UTF-8">
-<title>Travel Map</title>
+    <meta charset="UTF-8">
+    <title>Travel Map</title>
 
-<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
-<link rel="stylesheet" href="/css/style.css">
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet"
+          href="https://unpkg.com/leaflet/dist/leaflet.css">
+
+    <style>
+        /* 地図サイズ */
+        #map {
+            height: 500px;
+            width: 100%;
+        }
+
+        /* 投稿画像サイズ */
+        img {
+            width: 300px;
+        }
+    </style>
 </head>
 
 <body>
 
-<h1>Travel Map</h1>
+    <!-- ========================= -->
+    <!-- タイトル -->
+    <!-- ========================= -->
+    <h1>Travel Map</h1>
 
-    <div>
-        総投稿数:
-        <span th:text="${postCount}">
-        </span>
-        件
+    <!-- ========================= -->
+    <!-- ログインユーザー表示 -->
+    <!-- ========================= -->
+    <div th:if="${loginUser != null}">
+        ログイン中 :
+        <b th:text="${loginUser.name}"></b>
+
+        <a href="/logout">
+            ログアウト
+        </a>
     </div>
 
     <br>
 
-    <div>
-        訪問場所数:
-        <span th:text="${placeCount}">
-        </span>
-        件
-    </div>
-
-    <br>
     <!-- ========================= -->
-    <!-- 検索フォーム -->
+    <!-- 検索 -->
     <!-- ========================= -->
-    <form action="/search"
-        method="get">
+    <form action="/search" method="get">
 
-       <input type="text"
-       name="keyword"
-       th:value="${keyword}"
-       placeholder="国名・旅行先を入力">
+        <input type="text"
+               name="keyword"
+               placeholder="検索">
 
-        <button type="submit">検索</button>
+        <button type="submit">
+            検索
+        </button>
 
-        <button type="button"
-                onclick="location.href='/'">全件表示</button>
     </form>
 
     <br>
 
-<div id="map"></div>
-
-<form action="/posts"
-      method="post"
-      th:object="${post}"
-      enctype="multipart/form-data">
-
-    <div>
-        <label>投稿内容</label>
-        <input type="text" th:field="*{content}" placeholder="旅行先を入力">
-    </div>
+    <!-- ========================= -->
+    <!-- 地図 -->
+    <!-- ========================= -->
+    <div id="map"></div>
 
     <br>
 
-    <div>
-        <label>画像選択</label>
-        <input type="file" name="image" accept="image/*">
-    </div>
+    <!-- ========================= -->
+    <!-- 投稿フォーム -->
+    <!-- ========================= -->
+    <form action="/posts"
+          method="post"
+          enctype="multipart/form-data"
+          th:object="${post}">
 
-    <br>
+        投稿内容
 
-    <div>
-            <label>緯度</label>
-            <input type="text"
-                    id="latitude"
-                    name="latitude"
-                    readonly>
-        </div>
+        <input type="text"
+               th:field="*{content}">
 
-        <br>
+        <br><br>
 
-        <div>
-            <label>経度</label>
-            <input type="text"
-                    id="longitude"
-                    name="longitude"
-                    readonly>
-        </div>
+        緯度
 
-    <br>
+        <input id="lat"
+               type="text"
+               th:field="*{latitude}"
+               readonly>
 
-    <button type="submit">投稿する</button>
+        <br><br>
 
-</form>
+        経度
 
-<hr>
+        <input id="lng"
+               type="text"
+               th:field="*{longitude}"
+               readonly>
 
-<h2>投稿一覧</h2>
+        <br><br>
 
-<div th:each="post : ${posts}">
+        画像
 
-    <b th:text="${post.content}"></b><br>
+        <input type="file"
+               name="image">
 
-    <div th:if="${post.imagePath != null and !post.imagePath.isEmpty()}">
-        <img th:src="@{/uploads/{img}(img=${post.imagePath})}" width="250">
-    </div>
+        <br><br>
 
-    緯度: <span th:text="${post.latitude}"></span><br>
-    経度: <span th:text="${post.longitude}"></span><br>
-    投稿日時: <span th:text="${post.createdAt}"></span><br>
+        <button type="submit">
+            投稿
+        </button>
 
-    <form th:action="@{/edit}" method="get" style="display:inline">
-        <input type="hidden" name="id" th:value="${post.id}">
-        <button type="submit">編集</button>
-    </form>
-
-    <form action="/delete" method="post" style="display:inline">
-        <input type="hidden" name="id" th:value="${post.id}">
-        <button type="submit">削除</button>
     </form>
 
     <hr>
 
-</div>
+    <!-- ========================= -->
+    <!-- 投稿一覧 -->
+    <!-- ========================= -->
+    <div th:each="post : ${posts}">
 
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+        <!-- 投稿内容 -->
+        <h3 th:text="${post.content}"></h3>
 
-<script th:inline="javascript">
-const posts = /*[[${posts}]]*/ [];
-</script>
+        <!-- 投稿者 -->
+        <p th:if="${post.user != null}">
+            投稿者 :
+            <span th:text="${post.user.name}"></span>
+        </p>
 
-<script src="/js/map.js"></script>
+        <!-- 緯度 -->
+        <p>
+            緯度 :
+            <span th:text="${post.latitude}"></span>
+        </p>
+
+        <!-- 経度 -->
+        <p>
+            経度 :
+            <span th:text="${post.longitude}"></span>
+        </p>
+
+        <!-- 投稿日時 -->
+        <p>
+            投稿日時 :
+            <span th:text="${#temporals.format(post.createdAt,'yyyy/MM/dd HH:mm')}"></span>
+        </p>
+
+        <!-- 画像 -->
+        <div th:if="${post.imagePath != null and !post.imagePath.isEmpty()}">
+
+            <img th:src="@{/uploads/{file}(file=${post.imagePath})}">
+
+        </div>
+
+        <br>
+
+        <div th:if="${loginUser.id == post.user.id}">
+
+            <a th:href="@{/edit(id=${post.id})}">
+                編集
+            </a>
+
+            <form action="/delete" method="post">
+
+                <input type="hidden"
+                    name="id"
+                    th:value="${post.id}">
+
+                <button type="submit">
+                    削除
+                </button>
+
+            </form>
+
+        </div>
+
+        <hr>
+
+    </div>
+
+    <!-- ========================= -->
+    <!-- Leaflet -->
+    <!-- ========================= -->
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+    <!-- ========================= -->
+    <!-- Java → JavaScriptへデータ渡し -->
+    <!-- ========================= -->
+    <script th:inline="javascript">
+        const posts = [];
+    </script>
+
+    <!-- ========================= -->
+    <!-- map.js読み込み -->
+    <!-- ========================= -->
+    <script th:src="@{/js/map.js}"></script>
 
 </body>
 </html>

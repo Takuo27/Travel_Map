@@ -1,120 +1,105 @@
 package com.takuya.travelmap.controller;
 
-// モデル(Entity)
 import com.takuya.travelmap.model.Post;
-
-// Service
+import com.takuya.travelmap.model.User;
+import com.takuya.travelmap.service.CommentService;
 import com.takuya.travelmap.service.PostService;
 
-// 入力チェック
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 
-// Spring MVC
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-
-// バリデーション結果保持
 import org.springframework.validation.BindingResult;
 
-// URLマッピング
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-
-// フォームオブジェクト受取
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
-// リクエストパラメータ取得
-import org.springframework.web.bind.annotation.RequestParam;
-
-// ファイルアップロード受取
 import org.springframework.web.multipart.MultipartFile;
 
-import com.takuya.travelmap.service.CommentService;
-
-// ファイル操作
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
-// ファイルコピー
 import java.nio.file.StandardCopyOption;
 
 @Controller
 public class PostController {
 
     // =========================
-    // Service保持
+    // Service
     // =========================
     private final PostService postService;
-
     private final CommentService commentService;
 
     // =========================
     // コンストラクタDI
     // =========================
-        public PostController(
+    public PostController(
+            PostService postService,
+            CommentService commentService) {
 
-                PostService postService,
-
-                CommentService commentService
-        ) {
-
-        this.postService =
-                postService;
-
-        this.commentService =
-                commentService;
-        }
+        this.postService = postService;
+        this.commentService = commentService;
+    }
 
     // =========================
-    // TOP画面表示
+    // TOP画面
     // URL: /
     // =========================
     @GetMapping("/")
     public String index(
-            Model model) {
+            Model model,
+            HttpSession session) {
 
-        // 投稿一覧
+        Object loginUser =
+                session.getAttribute(
+                        "loginUser"
+                );
+
+        // 未ログインならログイン画面
+        if (loginUser == null) {
+            return "redirect:/login";
+        }
+
         model.addAttribute(
                 "posts",
                 postService.getPosts()
         );
 
-        // 投稿フォーム用
         model.addAttribute(
                 "post",
                 new Post()
         );
 
-        // 投稿件数
         model.addAttribute(
-                "postCount",
-                postService.getPostCount()
+                "loginUser",
+                loginUser
         );
 
-        model.addAttribute(
-                "placeCount",
-                postService.getPlaceCount()
-        );
         return "index";
     }
 
     // =========================
-    // 投稿追加
+    // 投稿処理
     // URL: /posts
     // =========================
     @PostMapping("/posts")
     public String addPost(
 
             @Valid
-            @ModelAttribute Post post,
+            @ModelAttribute
+            Post post,
 
             BindingResult result,
 
             @RequestParam("image")
             MultipartFile image,
 
-            Model model
+            Model model,
+
+            HttpSession session
     ) {
 
         // 入力エラー
@@ -125,19 +110,26 @@ public class PostController {
                     postService.getPosts()
             );
 
-            model.addAttribute(
-                    "postCount",
-                    postService.getPostCount()
-            );
-
             return "index";
         }
 
-        String imageName = "";
+        // =========================
+        // ログインユーザー取得
+        // =========================
+        User loginUser =
+                (User) session.getAttribute(
+                        "loginUser"
+                );
+
+        post.setUser(
+                loginUser
+        );
 
         // =========================
         // 画像保存
         // =========================
+        String imageName = "";
+
         if (!image.isEmpty()) {
 
             try {
@@ -151,11 +143,20 @@ public class PostController {
                         );
 
                 Files.copy(
+
                         image.getInputStream(),
+
                         uploadPath.resolve(
                                 imageName
                         ),
-                        StandardCopyOption.REPLACE_EXISTING
+
+                        StandardCopyOption
+                                .REPLACE_EXISTING
+                );
+
+                System.out.println(
+                        "保存完了 : "
+                        + imageName
                 );
 
             } catch (Exception e) {
@@ -163,89 +164,12 @@ public class PostController {
                 e.printStackTrace();
 
             }
-
         }
 
+        // =========================
         // DB保存
+        // =========================
         postService.addPost(
-                post.getContent(),
-                post.getLatitude(),
-                post.getLongitude(),
-                imageName
-        );
-
-        return "redirect:/";
-    }
-
-    // =========================
-    // 編集画面表示
-    // URL: /edit
-    // =========================
-    @GetMapping("/edit")
-    public String editPost(
-
-            @RequestParam int id,
-
-            Model model
-    ) {
-
-        Post post =
-                postService.getPostById(
-                        id
-                );
-
-        model.addAttribute(
-                "post",
-                post
-        );
-
-        return "edit";
-    }
-
-    // =========================
-    // 更新処理
-    // URL: /update
-    // =========================
-    @PostMapping("/update")
-    public String updatePost(
-
-            @ModelAttribute Post post,
-
-            @RequestParam("image")
-            MultipartFile image
-    ) {
-
-        String imageName = "";
-
-        if (!image.isEmpty()) {
-
-            try {
-
-                imageName =
-                        image.getOriginalFilename();
-
-                Path uploadPath =
-                        Paths.get(
-                                "src/main/resources/static/uploads"
-                        );
-
-                Files.copy(
-                        image.getInputStream(),
-                        uploadPath.resolve(
-                                imageName
-                        ),
-                        StandardCopyOption.REPLACE_EXISTING
-                );
-
-            } catch(Exception e){
-
-                e.printStackTrace();
-
-            }
-
-        }
-
-        postService.updatePost(
                 post,
                 imageName
         );
@@ -259,9 +183,7 @@ public class PostController {
     // =========================
     @PostMapping("/delete")
     public String deletePost(
-
-            @RequestParam int id
-    ) {
+            @RequestParam int id) {
 
         postService.deletePost(
                 id
@@ -271,67 +193,23 @@ public class PostController {
     }
 
     // =========================
-    // 投稿検索
-    // URL: /search
+    // 詳細画面
+    // URL: /detail
     // =========================
-    @GetMapping("/search")
-    public String searchPosts(
+    @GetMapping("/detail")
+    public String detail(
 
             @RequestParam
-            String keyword,
+            int id,
 
             Model model
     ) {
 
-        model.addAttribute(
-                "posts",
-                postService.searchPosts(
-                        keyword
-                )
-        );
-
-        model.addAttribute(
-                "post",
-                new Post()
-        );
-
-        model.addAttribute(
-                "keyword",
-                keyword
-        );
-
-        model.addAttribute(
-                "postCount",
-                postService.getPostCount()
-        );
-
-        model.addAttribute(
-                "placeCount",
-                postService.getPlaceCount()
-        );
-        return "index";
-    }
-
-        // =========================
-        // 投稿詳細画面
-        // URL: /detail
-        // =========================
-        @GetMapping("/detail")
-        public String detailPost(
-
-                @RequestParam
-                int id,
-
-                Model model
-        ) {
-
-        // IDから投稿取得
         Post post =
                 postService.getPostById(
                         id
                 );
 
-        // HTMLへ渡す
         model.addAttribute(
                 "post",
                 post
@@ -346,78 +224,50 @@ public class PostController {
         );
 
         return "detail";
-        }
+    }
 
-        // =========================
-        // いいね処理
-        // URL: /like
-        // =========================
-        @PostMapping("/like")
-        public String addLike(
+    // =========================
+    // コメント追加
+    // URL: /comment
+    // =========================
+    @PostMapping("/comment")
+    public String addComment(
 
-                @RequestParam
-                int id
-        ) {
+            @RequestParam
+            int postId,
 
-        // いいね追加
-        postService.addLike(
-                id
-        );
-
-        // 詳細画面へ戻る
-        return "redirect:/detail?id="
-                + id;
-
-        }
-
-        // =========================
-        // コメント追加
-        // URL: /comment
-        // =========================
-        @PostMapping("/comment")
-        public String addComment(
-
-                @RequestParam
-                int postId,
-
-                @RequestParam
-                String content
-        ) {
+            @RequestParam
+            String content
+    ) {
 
         commentService.addComment(
-
                 postId,
                 content
         );
 
         return "redirect:/detail?id="
                 + postId;
+    }
 
-        }
+    // =========================
+    // コメント削除
+    // URL: /comment/delete
+    // =========================
+    @PostMapping("/comment/delete")
+    public String deleteComment(
 
-        // =========================
-        // コメント削除
-        // URL: /comment/delete
-        // =========================
-        @PostMapping(
-                "/comment/delete"
-        )
-        public String deleteComment(
+            @RequestParam
+            int commentId,
 
-                @RequestParam
-                int commentId,
+            @RequestParam
+            int postId
+    ) {
 
-                @RequestParam
-                int postId
-        ) {
+        commentService.deleteComment(
+                commentId
+        );
 
-        commentService
-                .deleteComment(
-                        commentId
-                );
-
-        return
-                "redirect:/detail?id="
+        return "redirect:/detail?id="
                 + postId;
-        }
+    }
 }

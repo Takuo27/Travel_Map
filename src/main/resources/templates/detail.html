@@ -17,6 +17,10 @@
 
     <!-- 投稿内容 -->
     <h2 th:text="${post.content}"></h2>
+    <p>
+        投稿者:
+        <span th:text="${post.user.name}"></span>
+    </p>
 
     <br>
 
@@ -63,9 +67,7 @@
     <!-- 投稿日時 -->
     <div>
         投稿日時:
-        <span
-        th:text="${post.createdAt}">
-        </span>
+        <span th:text="${#temporals.format(post.createdAt,'yyyy/MM/dd HH:mm')}"></span>
     </div>
 
     <div>👍

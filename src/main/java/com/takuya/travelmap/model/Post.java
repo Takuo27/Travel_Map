@@ -5,12 +5,16 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 // 入力チェック
 import jakarta.validation.constraints.NotBlank;
 
 // 日時
 import java.time.LocalDateTime;
+
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.JoinColumn;
 
 @Entity
 public class Post {
@@ -35,6 +39,10 @@ public class Post {
 
     // 画像パス
     private String imagePath;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
     // いいね数
     private int likes;
@@ -97,6 +105,10 @@ public class Post {
         return likes;
     }
 
+    public User getUser() {
+        return user;
+    }
+
     // =========================
     // Setter
     // =========================
@@ -146,5 +158,9 @@ public class Post {
             int likes) {
 
         this.likes = likes;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

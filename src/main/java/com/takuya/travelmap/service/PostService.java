@@ -31,21 +31,10 @@ public class PostService {
     // =========================
     // 投稿追加
     // =========================
-    public void addPost(
-
-            String content,
-            double latitude,
-            double longitude,
-            String imagePath
-
-    ) {
-
-        Post post =
-                new Post(
-                        content,
-                        latitude,
-                        longitude
-                );
+        public void addPost(
+                Post post,
+                String imagePath
+        ) {
 
         post.setImagePath(
                 imagePath
@@ -58,8 +47,7 @@ public class PostService {
         postRepository.save(
                 post
         );
-
-    }
+        }
 
     // =========================
     // 投稿削除
