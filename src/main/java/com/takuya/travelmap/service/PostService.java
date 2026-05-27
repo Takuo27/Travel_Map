@@ -175,6 +175,20 @@ public class PostService {
                 postRepository.save(
                         post
                 );
+                }
         }
-}
+
+        // =========================
+        // 投稿更新
+        // =========================
+        public void save(
+                Post post
+        ) {
+
+        postRepository.save(
+                post
+        );
+
+        }
+
 }

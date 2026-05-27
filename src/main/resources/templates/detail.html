@@ -134,43 +134,63 @@
 </form>
 
 <br>
+    <!-- ========================= -->
     <!-- コメント一覧 -->
-    <div th:each=
-        "comment : ${comments}">
+    <!-- ========================= -->
+    <div th:each="comment : ${comments}">
 
+        <!-- コメント投稿者 -->
+        <div th:if="${comment.user != null}">
+
+            <small>
+
+                投稿者 :
+                <span th:text="${comment.user.name}"></span>
+
+            </small>
+
+        </div>
+
+        <!-- コメント内容 -->
         <div>
 
-            <b th:text=
-            "${comment.content}">
+            <b th:text="${comment.content}">
             </b>
 
         </div>
 
-        <small
-            th:text=
-            "${comment.createdAt}">
+        <!-- コメント日時 -->
+        <small th:text=
+            "${#temporals.format(
+            comment.createdAt,
+            'yyyy/MM/dd HH:mm')}">
+
         </small>
 
-        <form
-            action="/comment/delete"
-            method="post">
+        <br><br>
 
-            <input
-                type="hidden"
-                name="commentId"
-                th:value=
-                "${comment.id}">
+        <!-- 自分のコメントのみ削除表示 -->
+        <div th:if="${comment.user != null and loginUser.id == comment.user.id}">
 
-            <input
-                type="hidden"
-                name="postId"
-                th:value=
-                "${post.id}">
+            <form action="/comment/delete"
+                method="post">
 
-            <button type="submit">削除</button>
-        </form>
-        <hr>
-    </div>
+                <input type="hidden"
+                    name="commentId"
+                    th:value="${comment.id}">
+
+                <input type="hidden"
+                    name="postId"
+                    th:value="${post.id}">
+
+                <button type="submit">
+                    削除
+                </button>
+            </form>
+
+        </div>
+    <hr>
+</div>
 
     <br><br>
 

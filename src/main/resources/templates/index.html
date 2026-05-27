@@ -5,11 +5,14 @@
     <meta charset="UTF-8">
     <title>Travel Map</title>
 
+    <!-- ========================= -->
     <!-- Leaflet CSS -->
+    <!-- ========================= -->
     <link rel="stylesheet"
           href="https://unpkg.com/leaflet/dist/leaflet.css">
 
     <style>
+
         /* 地図サイズ */
         #map {
             height: 500px;
@@ -20,7 +23,9 @@
         img {
             width: 300px;
         }
+
     </style>
+
 </head>
 
 <body>
@@ -31,15 +36,17 @@
     <h1>Travel Map</h1>
 
     <!-- ========================= -->
-    <!-- ログインユーザー表示 -->
+    <!-- ログインユーザー -->
     <!-- ========================= -->
     <div th:if="${loginUser != null}">
+
         ログイン中 :
         <b th:text="${loginUser.name}"></b>
 
         <a href="/logout">
             ログアウト
         </a>
+
     </div>
 
     <br>
@@ -47,7 +54,8 @@
     <!-- ========================= -->
     <!-- 検索 -->
     <!-- ========================= -->
-    <form action="/search" method="get">
+    <form action="/search"
+          method="get">
 
         <input type="text"
                name="keyword"
@@ -145,40 +153,82 @@
         <!-- 投稿日時 -->
         <p>
             投稿日時 :
-            <span th:text="${#temporals.format(post.createdAt,'yyyy/MM/dd HH:mm')}"></span>
+            <span
+                th:text="${#temporals.format(
+                    post.createdAt,
+                    'yyyy/MM/dd HH:mm'
+                )}">
+            </span>
         </p>
 
-        <!-- 画像 -->
-        <div th:if="${post.imagePath != null and !post.imagePath.isEmpty()}">
+        <!-- ========================= -->
+        <!-- 投稿画像 -->
+        <!-- ========================= -->
+        <div
+            th:if="${post.imagePath != null
+                    and !post.imagePath.isEmpty()}">
 
-            <img th:src="@{/uploads/{file}(file=${post.imagePath})}">
+            <img
+                th:src=
+                "@{/uploads/{file}
+                (file=${post.imagePath})}">
 
         </div>
 
         <br>
 
-        <div th:if="${loginUser.id == post.user.id}">
+        <!-- ========================= -->
+        <!-- ↓ここに追加 -->
+        <!-- いいね -->
+        <!-- ========================= -->
+        <form
+            action="/like"
+            method="post">
 
-            <a th:href="@{/edit(id=${post.id})}">
+            <input
+                type="hidden"
+                name="postId"
+                th:value="${post.id}">
+
+            <button type="submit">
+
+                ❤️
+
+            </button>
+
+            <span
+                th:text="${post.likeCount}">
+            </span>
+
+        </form>
+
+        <!-- ========================= -->
+        <!-- 編集・削除 -->
+        <!-- ========================= -->
+        <div
+            th:if="${post.user != null
+                    and loginUser.id
+                    == post.user.id}">
+            <a
+                th:href="@{/edit(id=${post.id})}">
                 編集
             </a>
 
-            <form action="/delete" method="post">
+            <form
+                action="/delete"
+                method="post">
 
-                <input type="hidden"
+                <input
+                    type="hidden"
                     name="id"
                     th:value="${post.id}">
 
                 <button type="submit">
                     削除
                 </button>
-
             </form>
-
         </div>
-
         <hr>
-
     </div>
 
     <!-- ========================= -->
@@ -187,16 +237,19 @@
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
     <!-- ========================= -->
-    <!-- Java → JavaScriptへデータ渡し -->
+    <!-- Java → JavaScript -->
     <!-- ========================= -->
     <script th:inline="javascript">
+
         const posts = [];
+
     </script>
 
     <!-- ========================= -->
-    <!-- map.js読み込み -->
+    <!-- map.js -->
     <!-- ========================= -->
     <script th:src="@{/js/map.js}"></script>
 
 </body>
+
 </html>

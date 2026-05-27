@@ -4,16 +4,28 @@ import com.takuya.travelmap.model.User;
 import com.takuya.travelmap.repository.UserRepository;
 
 import org.springframework.stereotype.Service;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Service
 public class UserService {
 
+    // =========================
+    // Repository
+    // =========================
     private final UserRepository
             userRepository;
 
-    // コンストラクタDI
-    public UserService(
+    // =========================
+    // パスワード暗号化
+    // =========================
+    private final BCryptPasswordEncoder
+            passwordEncoder =
+            new BCryptPasswordEncoder();
 
+    // =========================
+    // コンストラクタDI
+    // =========================
+    public UserService(
             UserRepository
             userRepository
     ) {
@@ -27,9 +39,17 @@ public class UserService {
     // ユーザー登録
     // =========================
     public void register(
-
             User user
     ) {
+
+        // パスワード暗号化
+        user.setPassword(
+
+                passwordEncoder.encode(
+                        user.getPassword()
+                )
+
+        );
 
         userRepository.save(
                 user
@@ -52,13 +72,14 @@ public class UserService {
                         username
                 );
 
-        // ユーザー存在チェック
-        if(user != null &&
-           user.getPassword()
-               .equals(password)) {
+        // BCrypt比較
+        if (user != null &&
+            passwordEncoder.matches(
+                    password,
+                    user.getPassword()
+            )) {
 
             return user;
-
         }
 
         return null;

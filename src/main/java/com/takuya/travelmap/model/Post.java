@@ -7,14 +7,12 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Transient;
 // 入力チェック
 import jakarta.validation.constraints.NotBlank;
 
 // 日時
 import java.time.LocalDateTime;
-
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.JoinColumn;
 
 @Entity
 public class Post {
@@ -46,6 +44,13 @@ public class Post {
 
     // いいね数
     private int likes;
+
+    // =========================
+    // いいね数
+    // DB保存対象外
+    // =========================
+    @Transient
+    private int likeCount;
 
     // 空コンストラクタ
     public Post() {
@@ -109,6 +114,10 @@ public class Post {
         return user;
     }
 
+    public int getLikeCount() {
+        return likeCount;
+    }
+
     // =========================
     // Setter
     // =========================
@@ -162,5 +171,12 @@ public class Post {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public void setLikeCount(
+        int likeCount
+    ) {
+        this.likeCount =
+                likeCount;
     }
 }
