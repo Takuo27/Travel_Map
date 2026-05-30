@@ -3,9 +3,7 @@ package com.takuya.travelmap.model;
 import jakarta.persistence.*;
 
 @Entity
-@Table(
-        name = "likes"
-)
+@Table(name = "post_likes")
 public class Like {
 
     // =========================

@@ -91,23 +91,23 @@
 
         <br><br>
 
-        緯度
+        <!-- ========================= -->
+        <!-- 緯度 -->
+        <!-- ========================= -->
+        <input id="latitude"
+            type="text"
+            th:field="*{latitude}"
+            readonly>
+        <br>
 
-        <input id="lat"
-               type="text"
-               th:field="*{latitude}"
-               readonly>
-
-        <br><br>
-
-        経度
-
-        <input id="lng"
-               type="text"
-               th:field="*{longitude}"
-               readonly>
-
-        <br><br>
+        <!-- ========================= -->
+        <!-- 経度 -->
+        <!-- ========================= -->
+        <input id="longitude"
+            type="text"
+            th:field="*{longitude}"
+            readonly>
+        <br>
 
         画像
 
@@ -241,7 +241,7 @@
     <!-- ========================= -->
     <script th:inline="javascript">
 
-        const posts = [];
+        const posts = /*[[${posts}]]*/ [];
 
     </script>
 

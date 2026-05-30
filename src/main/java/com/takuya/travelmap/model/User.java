@@ -3,6 +3,7 @@ package com.takuya.travelmap.model;
 import jakarta.persistence.*;
 
 @Entity
+@Table(name = "users")
 public class User {
 
     // =========================

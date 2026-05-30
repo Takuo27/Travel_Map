@@ -1,11 +1,22 @@
 package com.takuya.travelmap.service;
 
+// =========================
+// Model
+// =========================
 import com.takuya.travelmap.model.Like;
 import com.takuya.travelmap.model.Post;
 import com.takuya.travelmap.model.User;
 
+// =========================
+// Repository
+// =========================
 import com.takuya.travelmap.repository.LikeRepository;
 import com.takuya.travelmap.repository.PostRepository;
+
+// =========================
+// Optional
+// =========================
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -15,103 +26,70 @@ public class LikeService {
     // =========================
     // Repository
     // =========================
-    private final LikeRepository
-            likeRepository;
-
-    private final PostRepository
-            postRepository;
+    private final LikeRepository likeRepository;
+    private final PostRepository postRepository;
 
     // =========================
     // コンストラクタDI
     // =========================
     public LikeService(
-
-            LikeRepository
-            likeRepository,
-
-            PostRepository
-            postRepository
+            LikeRepository likeRepository,
+            PostRepository postRepository
     ) {
-
-        this.likeRepository =
-                likeRepository;
-
-        this.postRepository =
-                postRepository;
-
+        this.likeRepository = likeRepository;
+        this.postRepository = postRepository;
     }
 
     // =========================
-    // いいね追加・解除
+    // いいねON / OFF切り替え
     // =========================
     public void toggleLike(
-
             int postId,
             User user
     ) {
 
+        // =========================
         // 投稿取得
-        Post post =
-                postRepository
+        // =========================
+        Post post = postRepository
                 .findById(postId)
                 .orElse(null);
 
+        // 投稿が存在しない場合は終了
         if (post == null) {
-
-            return;
-
-        }
-
-        // 既にいいね済みか確認
-        Like like =
-                likeRepository
-                .findByUserAndPost(
-                        user,
-                        post
-                );
-
-        // =========================
-        // 既にあるなら削除
-        // =========================
-        if (like != null) {
-
-            likeRepository.delete(
-                    like
-            );
-
             return;
         }
 
         // =========================
-        // 新規いいね
+        // 既にいいねしているか確認
         // =========================
-        Like newLike =
-                new Like();
+        Optional<Like> likeOpt =
+                likeRepository.findByUserAndPost(user, post);
 
-        newLike.setUser(
-                user
-        );
+        // =========================
+        // 既にいいね済み → 削除（解除）
+        // =========================
+        if (likeOpt.isPresent()) {
 
-        newLike.setPost(
-                post
-        );
+            likeRepository.delete(likeOpt.get());
+            return;
+        }
 
-        likeRepository.save(
-                newLike
-        );
+        // =========================
+        // 未いいね → 新規作成
+        // =========================
+        Like newLike = new Like();
+
+        newLike.setUser(user);
+        newLike.setPost(post);
+
+        likeRepository.save(newLike);
     }
 
     // =========================
     // いいね数取得
     // =========================
-    public int getLikeCount(
-            Post post
-    ) {
-
-        return likeRepository
-                .countByPost(
-                        post
-                );
+    public long getLikeCount(Post post) {
+        return likeRepository.countByPost(post);
     }
-
 }

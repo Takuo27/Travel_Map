@@ -25,5 +25,4 @@ public interface PostRepository
         "SELECT COUNT(DISTINCT p.content) FROM Post p"
     )
     long countDistinctContent();
-
 }

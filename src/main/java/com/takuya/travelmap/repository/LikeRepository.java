@@ -6,27 +6,17 @@ import com.takuya.travelmap.model.User;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface LikeRepository
-        extends JpaRepository<
-                Like,
-                Integer> {
+import java.util.Optional;
+
+public interface LikeRepository extends JpaRepository<Like, Integer> {
 
     // =========================
-    // ユーザーがその投稿に
-    // いいね済みか確認
+    // いいね済み確認
     // =========================
-    Like findByUserAndPost(
-
-            User user,
-            Post post
-    );
+    Optional<Like> findByUserAndPost(User user, Post post);
 
     // =========================
-    // 投稿のいいね数取得
+    // いいね数取得
     // =========================
-    int countByPost(
-
-            Post post
-    );
-
+    long countByPost(Post post);
 }
